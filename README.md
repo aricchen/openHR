@@ -1,2 +1,3 @@
-openerp
+OpenERP Developers
 =======
+Nothing to comment.
