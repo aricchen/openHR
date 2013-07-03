@@ -690,10 +690,10 @@ class WebClient(openerpweb.Controller):
         # For performance reasons we only load a single translation, so for
         # sub-languages (that should only be partially translated) we load the
         # main language PO instead - that should be enough for the login screen.
-	if req.lang in ('zh_CN', 'zh_TW', 'zh_HK'):
-		lang = req.lang
-	else:
-	        lang = req.lang.split('_')[0]
+        if req.lang in ('zh_CN', 'zh_TW', 'zh_HK'):
+                lang = req.lang
+        else:
+                lang = req.lang.split('_')[0]
 
         translations_per_module = {}
         for addon_name in mods:
