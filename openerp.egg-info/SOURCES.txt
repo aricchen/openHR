@@ -1274,6 +1274,7 @@ openerp/addons/account_report_company/i18n/it.po
 openerp/addons/account_report_company/i18n/nl.po
 openerp/addons/account_report_company/i18n/sl.po
 openerp/addons/account_report_company/i18n/tr.po
+openerp/addons/account_report_company/i18n/vi.po
 openerp/addons/account_report_company/i18n/zh_CN.po
 openerp/addons/account_report_company/report/__init__.py
 openerp/addons/account_report_company/report/account_invoice_report.py
@@ -1904,6 +1905,7 @@ openerp/addons/auth_oauth_signup/i18n/ru.po
 openerp/addons/auth_oauth_signup/i18n/sl.po
 openerp/addons/auth_oauth_signup/i18n/sv.po
 openerp/addons/auth_oauth_signup/i18n/tr.po
+openerp/addons/auth_oauth_signup/i18n/vi.po
 openerp/addons/auth_oauth_signup/i18n/zh_CN.po
 openerp/addons/auth_oauth_signup/i18n/zh_TW.po
 openerp/addons/auth_oauth_signup/static/src/js/auth_oauth_signup.js
@@ -1942,6 +1944,7 @@ openerp/addons/auth_openid/i18n/sl.po
 openerp/addons/auth_openid/i18n/sr@latin.po
 openerp/addons/auth_openid/i18n/sv.po
 openerp/addons/auth_openid/i18n/tr.po
+openerp/addons/auth_openid/i18n/vi.po
 openerp/addons/auth_openid/i18n/zh_CN.po
 openerp/addons/auth_openid/static/src/css/openid.css
 openerp/addons/auth_openid/static/src/img/aol.png
@@ -1993,6 +1996,7 @@ openerp/addons/auth_signup/i18n/ro.po
 openerp/addons/auth_signup/i18n/ru.po
 openerp/addons/auth_signup/i18n/sl.po
 openerp/addons/auth_signup/i18n/tr.po
+openerp/addons/auth_signup/i18n/vi.po
 openerp/addons/auth_signup/i18n/zh_CN.po
 openerp/addons/auth_signup/static/src/js/auth_signup.js
 openerp/addons/auth_signup/static/src/xml/auth_signup.xml
@@ -2920,6 +2924,7 @@ openerp/addons/claim_from_delivery/i18n/sr@latin.po
 openerp/addons/claim_from_delivery/i18n/sv.po
 openerp/addons/claim_from_delivery/i18n/ta.po
 openerp/addons/claim_from_delivery/i18n/tr.po
+openerp/addons/claim_from_delivery/i18n/vi.po
 openerp/addons/claim_from_delivery/i18n/zh_CN.po
 openerp/addons/claim_from_delivery/i18n/zh_TW.po
 openerp/addons/claim_from_delivery/images/1_claim_link_delivery_order.jpeg
@@ -2938,6 +2943,7 @@ openerp/addons/contacts/i18n/fr.po
 openerp/addons/contacts/i18n/hr.po
 openerp/addons/contacts/i18n/hu.po
 openerp/addons/contacts/i18n/it.po
+openerp/addons/contacts/i18n/ko.po
 openerp/addons/contacts/i18n/lt.po
 openerp/addons/contacts/i18n/mk.po
 openerp/addons/contacts/i18n/mn.po
@@ -2952,6 +2958,7 @@ openerp/addons/contacts/i18n/sl.po
 openerp/addons/contacts/i18n/sv.po
 openerp/addons/contacts/i18n/th.po
 openerp/addons/contacts/i18n/tr.po
+openerp/addons/contacts/i18n/vi.po
 openerp/addons/contacts/i18n/zh_CN.po
 openerp/addons/contacts/i18n/zh_TW.po
 openerp/addons/contacts/images/contacts.jpeg
@@ -3388,6 +3395,7 @@ openerp/addons/decimal_precision/i18n/hu.po
 openerp/addons/decimal_precision/i18n/id.po
 openerp/addons/decimal_precision/i18n/it.po
 openerp/addons/decimal_precision/i18n/ja.po
+openerp/addons/decimal_precision/i18n/ko.po
 openerp/addons/decimal_precision/i18n/lt.po
 openerp/addons/decimal_precision/i18n/lv.po
 openerp/addons/decimal_precision/i18n/mk.po
@@ -4008,6 +4016,7 @@ openerp/addons/fetchmail/i18n/hr.po
 openerp/addons/fetchmail/i18n/hu.po
 openerp/addons/fetchmail/i18n/it.po
 openerp/addons/fetchmail/i18n/ja.po
+openerp/addons/fetchmail/i18n/ko.po
 openerp/addons/fetchmail/i18n/lt.po
 openerp/addons/fetchmail/i18n/lv.po
 openerp/addons/fetchmail/i18n/mk.po
@@ -6479,7 +6488,9 @@ openerp/addons/mail/i18n/ru.po
 openerp/addons/mail/i18n/sl.po
 openerp/addons/mail/i18n/sr@latin.po
 openerp/addons/mail/i18n/sv.po
+openerp/addons/mail/i18n/th.po
 openerp/addons/mail/i18n/tr.po
+openerp/addons/mail/i18n/vi.po
 openerp/addons/mail/i18n/zh_CN.po
 openerp/addons/mail/i18n/zh_TW.po
 openerp/addons/mail/images/email.jpeg
@@ -7215,6 +7226,7 @@ openerp/addons/note_pad/i18n/ru.po
 openerp/addons/note_pad/i18n/sl.po
 openerp/addons/note_pad/i18n/sv.po
 openerp/addons/note_pad/i18n/tr.po
+openerp/addons/note_pad/i18n/vi.po
 openerp/addons/note_pad/i18n/zh_CN.po
 openerp/addons/pad/__init__.py
 openerp/addons/pad/__openerp__.py
@@ -11583,6 +11595,7 @@ openerp/addons/web_shortcuts/i18n/sl.po
 openerp/addons/web_shortcuts/i18n/sv.po
 openerp/addons/web_shortcuts/i18n/th.po
 openerp/addons/web_shortcuts/i18n/tr.po
+openerp/addons/web_shortcuts/i18n/vi.po
 openerp/addons/web_shortcuts/i18n/web_shortcuts.pot
 openerp/addons/web_shortcuts/i18n/zh_CN.po
 openerp/addons/web_shortcuts/i18n/zh_TW.po
