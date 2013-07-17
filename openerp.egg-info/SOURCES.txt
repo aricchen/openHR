@@ -169,6 +169,7 @@ openerp/addons/account/i18n/hi.po
 openerp/addons/account/i18n/hr.po
 openerp/addons/account/i18n/hu.po
 openerp/addons/account/i18n/id.po
+openerp/addons/account/i18n/is.po
 openerp/addons/account/i18n/it.po
 openerp/addons/account/i18n/ja.po
 openerp/addons/account/i18n/kab.po
@@ -1269,6 +1270,7 @@ openerp/addons/account_report_company/account_invoice_view.xml
 openerp/addons/account_report_company/account_report_company.py
 openerp/addons/account_report_company/res_partner_view.xml
 openerp/addons/account_report_company/i18n/account_report_company.pot
+openerp/addons/account_report_company/i18n/cs.po
 openerp/addons/account_report_company/i18n/es.po
 openerp/addons/account_report_company/i18n/it.po
 openerp/addons/account_report_company/i18n/nl.po
@@ -2728,6 +2730,7 @@ openerp/addons/base_status/i18n/pt_BR.po
 openerp/addons/base_status/i18n/ro.po
 openerp/addons/base_status/i18n/ru.po
 openerp/addons/base_status/i18n/sl.po
+openerp/addons/base_status/i18n/sv.po
 openerp/addons/base_status/i18n/tr.po
 openerp/addons/base_status/i18n/zh_CN.po
 openerp/addons/base_status/i18n/zh_TW.po
@@ -3773,6 +3776,7 @@ openerp/addons/edi/i18n/fi.po
 openerp/addons/edi/i18n/fr.po
 openerp/addons/edi/i18n/hr.po
 openerp/addons/edi/i18n/hu.po
+openerp/addons/edi/i18n/is.po
 openerp/addons/edi/i18n/it.po
 openerp/addons/edi/i18n/ja.po
 openerp/addons/edi/i18n/lt.po
@@ -7834,6 +7838,7 @@ openerp/addons/portal_anonymous/i18n/sl.po
 openerp/addons/portal_anonymous/i18n/sv.po
 openerp/addons/portal_anonymous/i18n/th.po
 openerp/addons/portal_anonymous/i18n/tr.po
+openerp/addons/portal_anonymous/i18n/zh_CN.po
 openerp/addons/portal_anonymous/security/ir.model.access.csv
 openerp/addons/portal_anonymous/static/src/js/portal_anonymous.js
 openerp/addons/portal_anonymous/static/src/xml/portal_anonymous.xml
@@ -11606,6 +11611,7 @@ openerp/addons/web_shortcuts/static/src/xml/web_shortcuts.xml
 openerp/addons/web_tests/__init__.py
 openerp/addons/web_tests/__openerp__.py
 openerp/addons/web_tests/i18n/cs.po
+openerp/addons/web_tests/i18n/es.po
 openerp/addons/web_tests/i18n/es_CR.po
 openerp/addons/web_tests/i18n/fr_CA.po
 openerp/addons/web_tests/i18n/web_tests.pot
