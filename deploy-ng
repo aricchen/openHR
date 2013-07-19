@@ -18,6 +18,7 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+GUNICORN_BIN=`which gunicorn`
 GUNICONF=/etc/gunicorn.d
 NGINXCONF=/etc/nginx
 NGINXSITE=/etc/nginx/sites-available
@@ -25,31 +26,44 @@ SVCONF=/etc/supervisor/conf.d
 
 SRC_AP=`readlink -f $1`
 SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
+MODSRC=`cat $SRC_AP/install-modules`
+
+CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
+WORKERS=`expr $CPU_COUNT + 1`
+USERID=`id -u $DBUSER`
 
 [ ! -f $SRC_AP/openerp-wsgi.py ] &&
 echo -e "$SRC_AP/openerp-wsgi.py not detected.\n" &&
 echo -e "Please check your source directory." &&
 exit 1
 
-# Create database user
+# Create database user and Linux user
 echo "Please enter username for your database."
 read -p "Username: " DBUSER
 echo "Please enter the password for database login role '$DBUSER'."
-sudo -u postgres createuser -d -E -P -R -S $DBUSER
-echo "Please enter your database password again."
 read -s -p "Password: " DBPASS
+
+sudo -u postgres createuser -d -E -R -P -s -w -l $DBUSER
+sudo -u postgres createuser -D -E -R -P -S -w -l $DBUSER\doc
 sudo adduser --disabled-password --gecos "" $DBUSER
+
+# Set database user password.
+sudo -u postgres psql -q -c "ALTER ROLE $DBUSER WITH PASSWORD '$DBPASS';"
+sudo -u postgres psql -q -c "ALTER ROLE $DBUSER\doc WITH PASSWORD '$DBPASS';"
 
 # Copy OpenERP source to /var/
 cp -r $SRC_AP /var/
 chown -R $DBUSER: /var/$SRC_DIRNAME
 
+# Create database and set privileges.
+sudo -u openerp createdb $DBUSER
+sudo -u openerp python /var/$SRC_DIRNAME/openerp-server -d $DBUSER --stop-after-init --without-demo=all -i $MODSRC
+sudo -u postgres psql -q -d $DBUSER -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
+sudo -u postgres psql -q -d $DBUSER -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $DBUSER\doc;"
+
 # Copy WSGI configuration file to Gunicorn config folder.
 cp $SRC_AP/openerp-wsgi.py $GUNICONF
 
-CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
-WORKERS=`expr $CPU_COUNT + 1`
-USERID=`id -u $DBUSER`
 sed -i s\#addonpathhere\#/var/$SRC_DIRNAME/openerp/addons\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbuserhere\#$DBUSER\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbpasshere\#$DBPASS\# $GUNICONF/openerp-wsgi.py
@@ -71,7 +85,6 @@ service nginx reload
 
 # Configure Supervisor using template config
 cp $SRC_AP/supervisor/openerp.conf $SVCONF/
-GUNICORN_BIN=`which gunicorn`
 [ ! -d /var/log/openerp ] && mkdir /var/log/openerp && chmod 755 /var/log/openerp
 sed -i s\#gunicorn_binary\#$GUNICORN_BIN\# $SVCONF/openerp.conf
 sed -i s\#gunicorn_confdir\#$GUNICONF\# $SVCONF/openerp.conf
