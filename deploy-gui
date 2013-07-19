@@ -37,7 +37,9 @@ dialog --title "Installing Prerequisites" \
        --yesno "Do you want to install prerequisite packages?\n\
 You can skip this step if you have already installed them." \
        8 70
-[ $? -eq 0 ] && clear && echo "Please wait while the prerequisites are being installed..." && $SCRIPT_DIR/install-prerequisites
+[ $? -eq 0 ] && clear && \
+echo "Please wait while the prerequisites are being installed..." && \
+$SCRIPT_DIR/install-prerequisites 1> /tmp/preres-stdout | dialog --tailbox /tmp/preres-stdout 20 75
 clear
 
 dialog --title "OpenERP Source Directory" \

@@ -5,6 +5,10 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+echo "Prerequisites will be installed shortly."
+echo "Please wait until the screen prompts everything's being installed."
+sleep 3
+
 export DEP_PACK="adduser \
 python \
 postgresql-client \
@@ -54,3 +58,7 @@ apt-get upgrade -y
 apt-get -y install $DEP_PACK
 
 update-rc.d -f gunicorn remove
+
+echo ""
+echo "Prerequisites are installed successfully."
+echo "Please continue to next step."
