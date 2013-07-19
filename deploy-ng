@@ -11,15 +11,17 @@
 # * Configure WSGI script for Gunicorn                            #
 ###################################################################
 
-if [ $1 == "-h" ]; then
-echo "Usage: $(basename $0) <openerp source dir>" &&
-echo "If source dir is not specified, will use current dir." &&
-exit 1
+if [ "$1" = "-h" ]; then
+    echo "Usage: $(basename $0) <openerp source dir>" &&
+    echo "If source dir is not specified, will use current dir."
+else
+    echo "Using current working directory as source."
+fi
 
 if [ -z $1 ]; then
-	SRCDIR=`pwd`
+    SRCDIR=`pwd`
 else
-	SRCDIR=$1
+    SRCDIR=$1
 fi
 
 if [[ $EUID -ne 0 ]]; then
@@ -33,7 +35,7 @@ NGINXCONF=/etc/nginx
 NGINXSITE=/etc/nginx/sites-available
 SVCONF=/etc/supervisor/conf.d
 
-SRC_AP=`readlink -f $1`
+SRC_AP=`readlink -f $SRCDIR`
 SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
 MODSRC=`cat $SRC_AP/install-modules`
 
