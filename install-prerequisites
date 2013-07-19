@@ -5,6 +5,16 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+if hash dialog 2>/dev/null; then
+    true
+else
+    echo "Please install 'dialog' before you continue."
+    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
+    exit 1
+fi
+
+clear
+
 PROGRESS=0
 
 (echo $PROGRESS

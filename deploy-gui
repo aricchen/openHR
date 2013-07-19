@@ -84,6 +84,7 @@ dialog --title "OpenERP Database User" \
        --inputbox "Please enter the username for your database." \
        8 70 2> $TEMP/DBUSER
 DBUSER=`cat $TEMP/DBUSER`
+USERDOC=$DBUSER\doc
 clear
 done
 
@@ -106,38 +107,65 @@ DOMNAME=`cat $TEMP/DOMNAME`
 [ -z $DOMNAME ] && DOMNAME=localhost
 clear
 
-USERDOC=$DBUSER\doc
-
+INSPROG=0
+(
+echo $INSPROG
+echo "XXX"
+echo "Setting up database user..."
 sudo -u postgres createuser -d -E -R -s -l $DBUSER
 sudo -u postgres createuser -D -E -R -S -l $USERDOC
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
+
+echo "XXX"
+echo "Setting up Linux user..."
 sudo adduser --disabled-password --gecos "" $DBUSER
-
 USERID=`id -u $DBUSER`
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Set database user password.
+echo "XXX"
+echo "Setting up database password..."
 sudo -u postgres psql -q -c "ALTER ROLE $DBUSER WITH PASSWORD '$DBPASS';"
 sudo -u postgres psql -q -c "ALTER ROLE $USERDOC WITH PASSWORD '$DBPASS';"
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Copy OpenERP source to INSTPATH
+echo "XXX"
+echo "Copying OpenERP to destination path..."
 cp -r $SRC_AP $INSTPATH/
 chown -R $DBUSER: $INSTPATH/$SRC_DIRNAME
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Create database and set privileges.
+echo "XXX"
+echo "Creating database for OpenERP..."
 sudo -u openerp createdb $DBUSER
 sudo -u openerp python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --stop-after-init --without-demo=all -i $MODSRC
 sudo -u postgres psql -q -d $DBUSER -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
 sudo -u postgres psql -q -d $DBUSER -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $USERDOC;"
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Copy WSGI configuration file to Gunicorn config folder.
+echo "XXX"
+echo "Configuring Gunicorn..."
 cp $SRC_AP/openerp-wsgi.py $GUNICONF
-
 sed -i s\#addonpathhere\#$INSTPATH/$SRC_DIRNAME/openerp/addons\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbuserhere\#$DBUSER\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbpasshere\#$DBPASS\# $GUNICONF/openerp-wsgi.py
 sed -i s\#workershere\#$WORKERS\# $GUNICONF/openerp-wsgi.py
 sed -i s\#useridhere\#$USERID\# $GUNICONF/openerp-wsgi.py
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Configure Nginx using template config.
+echo "XXX"
+echo "Configuring Nginx..."
 [ -f $NGINXCONF/nginx.conf ] && mv $NGINXCONF/nginx.conf $NGINXCONF/nginx.conf-backup
 [ -f $NGINXSITE/openerp ] && mv $NGINXSITE/openerp $NGINXSITE/openerp-backup
 rm $NGINXCONF/sites-enabled/*
@@ -148,21 +176,38 @@ ln -s $NGINXSITE/openerp $NGINXCONF/sites-enabled/openerp
 sed -i s\#workercount\#$WORKERS\# $NGINXCONF/nginx.conf
 sed -i s\#rootdirhere\#$INSTPATH/$SRC_DIRNAME\# $NGINXSITE/openerp
 sed -i s\#domainhere\#$DOMNAME\# $NGINXSITE/openerp
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
+echo "XXX"
+echo "Restarting nginx..."
 service nginx stop
 sleep 1
 service nginx start
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
-# Configure Supervisor using template config
+echo "XXX"
+echo "Configuring Supervisor..."
 cp $SRC_AP/supervisor/openerp.conf $SVCONF/
 [ ! -d /var/log/openerp ] && mkdir /var/log/openerp && chmod 755 /var/log/openerp
 sed -i s\#gunicorn_binary\#$GUNICORN_BIN\# $SVCONF/openerp.conf
 sed -i s\#gunicorn_confdir\#$GUNICONF\# $SVCONF/openerp.conf
 sed -i s\#openerp_dir\#$INSTPATH/$SRC_DIRNAME\# $SVCONF/openerp.conf
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
+echo "XXX"
+echo "Restarting Supervisor..."
 service supervisor stop
 sleep 1
 service supervisor start
+echo "XXX"
+INSPROG=`expr $INSPROG + 10`
+echo $INSPROG
 
 # Print finish dialog
 dialog --title "OpenERP Installation Successful"
