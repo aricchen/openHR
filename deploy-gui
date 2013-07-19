@@ -37,6 +37,8 @@ dialog --title "Installing Prerequisites" \
        --yesno "Do you want to install prerequisite packages?\n\
 You can skip this step if you have already installed them." \
        8 70
+clear
+echo "Please wait while the prerequisites are being installed..."
 [ $? -eq 0 ] && $SCRIPT_DIR/install-prerequisites
 
 dialog --title "OpenERP Source Directory" \
@@ -58,14 +60,14 @@ SRC_AP=`readlink -f $SRCDIR`
 SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
 MODSRC=`cat $SRC_AP/install-modules`
 
-CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
-WORKERS=`expr $CPU_COUNT + 1`
-
 [ ! -f $SRC_AP/openerp-wsgi.py ] &&
-echo ""
+echo "" &&
 echo -e "$SRC_AP/openerp-wsgi.py not detected.\n" &&
 echo -e "Please check your source directory." &&
 exit 1
+
+CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
+WORKERS=`expr $CPU_COUNT + 1`
 
 # Define installation path.
 dialog --title "OpenERP Installation Path" \
