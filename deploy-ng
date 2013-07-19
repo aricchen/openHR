@@ -39,8 +39,12 @@ exit 1
 # Create database user and Linux user
 echo "Please enter username for your database."
 read -p "Username: " DBUSER
+echo ""
 echo "Please enter the password for database login role '$DBUSER'."
 read -s -p "Password: " DBPASS
+echo ""
+echo "Please enter this machine's domain name."
+read -p "Domain Name: " DOMNAME
 
 USERDOC=$DBUSER\doc
 
@@ -83,8 +87,11 @@ ln -s $NGINXSITE/openerp $NGINXCONF/sites-enabled/openerp
 
 sed -i s\#workercount\#$WORKERS\# $NGINXCONF/nginx.conf
 sed -i s\#rootdirhere\#/var/$SRC_DIRNAME\# $NGINXSITE/openerp
+sed -i s\#domainhere\#$DOMNAME\# $NGINXSITE/openerp
 
-service nginx reload
+service nginx stop
+sleep 1
+service nginx start
 
 # Configure Supervisor using template config
 cp $SRC_AP/supervisor/openerp.conf $SVCONF/
