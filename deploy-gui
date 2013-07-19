@@ -31,6 +31,7 @@ fi
 
 SCRIPT_DIR=`pwd`
 TEMP=/tmp
+LOGFILE=/var/log/cynovan.log
 DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --ok-label \"Confirm\""
 
 dialog --title "Installing Prerequisites" \
@@ -110,15 +111,15 @@ INSPROG=0
 echo $INSPROG
 echo "XXX"
 echo "Setting up database user..."
-sudo -u postgres createuser -d -E -R -s -l $DBUSER
-sudo -u postgres createuser -D -E -R -S -l $USERDOC
+sudo -u postgres createuser -d -E -R -s -l $DBUSER &>> $LOGFILE
+sudo -u postgres createuser -D -E -R -S -l $USERDOC &>> $LOGFILE
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
 echo $INSPROG
 
 echo "XXX"
 echo "Setting up Linux user..."
-sudo adduser --disabled-password --gecos "" $DBUSER
+sudo adduser --disabled-password --gecos "" $DBUSER &>> $LOGFILE
 USERID=`id -u $DBUSER`
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
@@ -126,8 +127,8 @@ echo $INSPROG
 
 echo "XXX"
 echo "Setting up database password..."
-sudo -u postgres psql -q -c "ALTER ROLE $DBUSER WITH PASSWORD '$DBPASS';"
-sudo -u postgres psql -q -c "ALTER ROLE $USERDOC WITH PASSWORD '$DBPASS';"
+sudo -u postgres psql -q -c "ALTER ROLE $DBUSER WITH PASSWORD '$DBPASS';" &>> $LOGFILE
+sudo -u postgres psql -q -c "ALTER ROLE $USERDOC WITH PASSWORD '$DBPASS';" &>> $LOGFILE
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
 echo $INSPROG
@@ -142,10 +143,10 @@ echo $INSPROG
 
 echo "XXX"
 echo "Creating database for OpenERP..."
-sudo -u openerp createdb $DBUSER
-sudo -u openerp python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --stop-after-init --without-demo=all -i $MODSRC
-sudo -u postgres psql -q -d $DBUSER -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
-sudo -u postgres psql -q -d $DBUSER -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $USERDOC;"
+sudo -u $DBUSER createdb $DBUSER &>> $LOGFILE
+sudo -u $DBUSER python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --stop-after-init --without-demo=all -i $MODSRC &>> $LOGFILE
+sudo -u postgres psql -q -d $DBUSER -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;" &>> $LOGFILE
+sudo -u postgres psql -q -d $DBUSER -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $USERDOC;" &>> $LOGFILE
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
 echo $INSPROG
@@ -180,9 +181,9 @@ echo $INSPROG
 
 echo "XXX"
 echo "Restarting nginx..."
-service nginx stop
+service nginx stop &>> $LOGFILE
 sleep 1
-service nginx start
+service nginx start &>> $LOGFILE
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
 echo $INSPROG
@@ -200,9 +201,9 @@ echo $INSPROG
 
 echo "XXX"
 echo "Restarting Supervisor..."
-service supervisor stop
+service supervisor stop &>> $LOGFILE
 sleep 1
-service supervisor start
+service supervisor start &>> $LOGFILE
 echo "XXX"
 INSPROG=`expr $INSPROG + 10`
 echo $INSPROG
@@ -216,7 +217,7 @@ dialog --title "OpenERP Installation Successful" \
        --ok-label "OK" \
        --msgbox "OpenERP Installation has completed successfully.\n\
 Please open your browser (preferably Chrome or Firefox)\n\
-and access http://localhost/ to start using OpenERP." \
+and access http://$DOMNAME/ to start using OpenERP." \
        7 60
 clear
 
