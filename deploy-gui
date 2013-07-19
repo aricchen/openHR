@@ -35,13 +35,13 @@ DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --o
 
 dialog --title "Installing Prerequisites" \
        --yesno "Do you want to install prerequisite packages?\n\
-                You can skip this step if you have already installed them."
+You can skip this step if you have already installed them." \
        8 70
 [ $? -eq 0 ] && $SCRIPT_DIR/install-prerequisites
 
 dialog --title "OpenERP Source Directory" \
        --inputbox "Please enter the ABSOLUTE path of the OpenERP source directory.\n\
-                   If empty, current working directory will be used."
+If empty, current working directory will be used." \
        8 70 2> $TEMP/SRCDIR
 SRCDIR=`cat $TEMP/SRCDIR`
 
@@ -70,7 +70,7 @@ exit 1
 # Define installation path.
 dialog --title "OpenERP Installation Path" \
        --inputbox "Please specify the path you wish to install OpenERP\n\
-                   Default value is /var, if unspecified."
+Default value is /var, if unspecified." \
        8 70 2> $TEMP/INSTPATH
 INSTPATH=`cat $TEMP/INSTPATH`
 
@@ -87,7 +87,7 @@ done
 
 while [ -z $DBPASS ]; do
 dialog --title "Password For Database User" \
-       --insecure
+       --insecure \
        --passwordbox "Please enter the password for database login role '$DBUSER'." \
        8 70 2> $TEMP/DBPASS
 DBPASS=`cat $TEMP/DBPASS`
@@ -97,7 +97,7 @@ done
 
 dialog --title "System Domain Name" \
        --inputbox "Please enter the domain name for this machine.\n\
-                   Default value is localhost, if unspecified."
+Default value is localhost, if unspecified." \
        8 70 2> $TEMP/DOMNAME
 DOMNAME=`cat $TEMP/DOMNAME`
 
@@ -166,8 +166,8 @@ service supervisor start
 dialog --title "OpenERP Installation Successful"
        --ok-label "OK"
        --msgbox "OpenERP Installation has completed successfully.\n\
-                 Please open your browser (preferably Chrome or Firefox)\n\
-                 and access http://localhost/ to start using OpenERP."
+Please open your browser (preferably Chrome or Firefox)\n\
+and access http://localhost/ to start using OpenERP." \
        7 60
 clear
 
