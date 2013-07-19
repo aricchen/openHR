@@ -20,8 +20,15 @@ fi
 
 ### Dialog Version of Deploy Script ###
 
+SCRIPT_DIR=`pwd`
 TEMP=/tmp
 DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --ok-label \"Confirm\""
+
+dialog --title "Installing Prerequisites" \
+       --yesno "Do you want to install prerequisite packages?\n\
+                You can skip this step if you have already installed them."
+       8 70
+[ $? -eq 0 ] && $SCRIPT_DIR/install-prerequisites
 
 dialog --title "OpenERP Source Directory" \
        --inputbox "Please enter the ABSOLUTE path of the OpenERP source directory.\n\
