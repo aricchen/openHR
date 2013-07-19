@@ -11,7 +11,16 @@
 # * Configure WSGI script for Gunicorn                            #
 ###################################################################
 
-[ -z $1 ] && echo "Usage: $(basename $0) <openerp source dir>" && exit 1
+if [ $1 == "-h" ]; then
+echo "Usage: $(basename $0) <openerp source dir>" &&
+echo "If source dir is not specified, will use current dir." &&
+exit 1
+
+if [ -z $1 ]; then
+	SRCDIR=`pwd
+else
+	SRCDIR=$1
+fi
 
 if [[ $EUID -ne 0 ]]; then
     echo "Please run this script as root." 1>&2
@@ -37,10 +46,11 @@ echo -e "Please check your source directory." &&
 exit 1
 
 # Define installation path.
+echo ""
 echo "Please specify the path you with to install OpenERP:"
 echo "Default value is /var, if unspecified."
 read -p "Install Path: " INSTPATH
-[ $INSTPATH = "" ] && INSTPATH=/var
+[ -z $INSTPATH ] && INSTPATH=/var
 
 # Create database user and Linux user
 echo "Please enter username for your database."
