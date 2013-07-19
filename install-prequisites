@@ -47,6 +47,6 @@ add-apt-repository -y ppa:nginx/stable
 add-apt-repository -y ppa:gunicorn/ppa
 # Latest GNU Tools
 #add-apt-repository -y ppa:dns/gnu
-apt-get install $DEP_PACK
+apt-get -y install $DEP_PACK
 
 update-rc.d -f gunicorn remove
