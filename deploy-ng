@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ###################################################################
 # This script aims to deploy OpenERP to local system running with #
 # Gunicorn as backend and Nginx as reverse proxy to serve the     #
@@ -13,6 +13,11 @@
 
 [ -z $1 ] && echo "Usage: $(basename $0) <openerp source dir>" && exit 1
 
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run this script as root." 1>&2
+    exit 1
+fi
+
 GUNICONF=/etc/gunicorn.d
 NGINXCONF=/etc/nginx
 NGINXSITE=/etc/nginx/sites-available
@@ -20,6 +25,10 @@ SVCONF=/etc/supervisor/conf.d
 
 SRC_AP=`readlink -f $1`
 SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
+
+[ !-f $SRC_AP/openerp-wsgi.py ] &&
+echo -e "$SRC_AP/openerp-wsgi.py not detected.\n" &&
+echo -e "Please check your source directory."
 
 # Create database user
 echo "Please enter username for your database."
