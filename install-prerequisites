@@ -5,10 +5,13 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "Prerequisites will be installed shortly."
-echo "Please wait until the screen prompts everything's being installed."
-sleep 3
+PROGRESS=0
 
+(echo $PROGRESS
+echo "XXX"
+echo "Prerequisites will be installed shortly."
+echo ""
+echo "Please wait for the installation to finish."
 export DEP_PACK="adduser \
 python \
 postgresql-client \
@@ -44,20 +47,54 @@ python-zsi \
 gunicorn \
 nginx-full \
 supervisor"
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 10`
+echo $PROGRESS
 
 # nginx PPA
-add-apt-repository -y ppa:nginx/stable
+echo "XXX"
+echo "Adding Nginx PPA..."
+add-apt-repository -y ppa:nginx/stable &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
+
 # Gunicorn PPA
-add-apt-repository -y ppa:gunicorn/ppa
+echo "XXX"
+echo "Adding Gunicorn PPA..."
+add-apt-repository -y ppa:gunicorn/ppa &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
+
 # Latest GNU Tools
 #add-apt-repository -y ppa:dns/gnu
 # Do system upgrade before installing
-apt-get update
-apt-get upgrade -y
+echo "Updating apt repository list..."
+apt-get update &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
 
-apt-get -y install $DEP_PACK
+echo "Upgrading system installed packages..."
+apt-get upgrade -y &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
 
-update-rc.d -f gunicorn remove
+echo "Installing prerequisites..."
+apt-get -y install $DEP_PACK &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
+
+echo "Removing Gunicorn from startup..."
+update-rc.d -f gunicorn remove &> /dev/null
+echo "XXX"
+PROGRESS=`expr $PROGRESS + 15`
+echo $PROGRESS
+) |
+dialog --title "Installing prerequisites" --gauge "Installation Progress:" 8 65
 
 echo ""
 echo "Prerequisites are installed successfully."
