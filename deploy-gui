@@ -1,4 +1,4 @@
-	#!/bin/bash
+#!/bin/bash
 ###################################################################
 # This script aims to deploy OpenERP to local system running with #
 # Gunicorn as backend and Nginx as reverse proxy to serve the     #
@@ -6,11 +6,14 @@
 # This includes a basic config for nginx without load-balancing.  #
 #                                                                 #
 # This script will do the following:                              #
-# * Create PostgreSQL user: openerp.                              #
+# * Create PostgreSQL user and password defined by user           #
 # * Configure nginx and supervisor                                #
 # * Configure WSGI script for Gunicorn                            #
+# * Installs pre-defined modules in install-module file           #
+# * Imports zh_CN language PO into OpenERP                        #
 ###################################################################
 
+# Check for root privilege.
 if [[ $EUID -ne 0 ]]; then
     echo ""
     echo "Please run this script as root." 1>&2
@@ -18,10 +21,8 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-### Dialog Version of Deploy Script ###
-
 # Check to see if 'dialog' is installed
-if hash dialog 2>/dev/null; then
+if hash dialog &> /dev/null; then
     true
 else
     echo "Please install 'dialog' before you continue."
@@ -29,11 +30,20 @@ else
     exit 1
 fi
 
+# Set up variables.
 SCRIPT_DIR=`pwd`
 TEMP=/tmp
 LOGFILE=/var/log/cynovan.log
 DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --ok-label \"Confirm\""
+CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
+WORKERS=`expr $CPU_COUNT + 1`
+GUNICORN_BIN=`which gunicorn`
+GUNICONF=/etc/gunicorn.d
+NGINXCONF=/etc/nginx
+NGINXSITE=/etc/nginx/sites-available
+SVCONF=/etc/supervisor/conf.d
 
+# Install prerequisites
 dialog --title "Installing Prerequisites" \
        --yesno "Do you want to install prerequisite packages?\n\
 You can skip this step if you have already installed them." \
@@ -42,43 +52,49 @@ You can skip this step if you have already installed them." \
 $SCRIPT_DIR/install-prerequisites
 clear
 
+# Ask for OpenERP source directory
+asksrc() {
 dialog --title "OpenERP Source Directory" \
        --inputbox "Please enter the ABSOLUTE path of the OpenERP source directory.\n\
 If empty, current working directory will be used." \
        8 70 2> $TEMP/SRCDIR
 SRCDIR=`cat $TEMP/SRCDIR`
 [ -z $SRCDIR ] && SRCDIR=`pwd`
-clear
-
-GUNICORN_BIN=`which gunicorn`
-GUNICONF=/etc/gunicorn.d
-NGINXCONF=/etc/nginx
-NGINXSITE=/etc/nginx/sites-available
-SVCONF=/etc/supervisor/conf.d
-
 SRC_AP=`readlink -f $SRCDIR`
 SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
 MODSRC=`cat $SRC_AP/install-modules`
+clear
+}
+asksrc
 
 [ ! -f $SRC_AP/openerp-wsgi.py ] &&
-echo "" &&
-echo -e "$SRC_AP/openerp-wsgi.py not detected.\n" &&
-echo -e "Please check your source directory." &&
-exit 1
+dialog --title "Error occured" \
+       --msgbox "$SRC_AP/openerp-wsgi.py not detected.\n\
+Please check your source directory path." \
+       8 70 &&
+asksrc
 
-CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
-WORKERS=`expr $CPU_COUNT + 1`
-
-# Define installation path.
+# Ask for installation path.
+askinst() {
 dialog --title "OpenERP Installation Path" \
        --inputbox "Please specify the path you wish to install OpenERP\n\
 Default value is /var, if unspecified." \
        8 70 2> $TEMP/INSTPATH
 INSTPATH=`cat $TEMP/INSTPATH`
+}
+askinst
 
 [ -z $INSTPATH ] && INSTPATH=/var
+[ ! -d $INSTPATH ] &&
+dialog --title "Error occured" \
+       --msgbox "$INSTPATH is not a valid path.\n\
+Please check your input again." \
+       8 70 &&
 clear
+askinst
 
+# Ask for database username
+askusername() {
 while [ -z $DBUSER ]; do
 dialog --title "OpenERP Database User" \
        --inputbox "Please enter the username for your database." \
@@ -87,10 +103,19 @@ DBUSER=`cat $TEMP/DBUSER`
 USERDOC=$DBUSER\doc
 clear
 done
+}
+askusername
 
+[ `id $DBUSER` -ne 0 ] &&
+       --msgbox "Username specified already exists.\n\
+Please choose another username." \
+       8 70 &&
+askusername
+
+# Ask for database password
 while [ -z $DBPASS ]; do
 dialog --title "Password For Database User" \
-       --insecure \
+       --insecure \  #insecure is an option to show asterisks when input password, otherwise nothing will be shown (to hide how many characters does the password has)
        --passwordbox "Please enter the password for database login role '$DBUSER'." \
        8 70 2> $TEMP/DBPASS
 DBPASS=`cat $TEMP/DBPASS`
@@ -98,6 +123,7 @@ rm $TEMP/DBPASS
 clear
 done
 
+# Ask for system domain name
 dialog --title "System Domain Name" \
        --inputbox "Please enter the domain name for this machine.\n\
 Default value is localhost, if unspecified." \
