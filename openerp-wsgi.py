@@ -52,6 +52,6 @@ pidfile = '/var/run/openerp.pid'
 workers = workershere
 timeout = 240
 max_requests = 10000
-user = dbuserhere
+user = useridhere
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
