@@ -20,6 +20,15 @@ fi
 
 ### Dialog Version of Deploy Script ###
 
+# Check to see if 'dialog' is installed
+if hash dialog 2>/dev/null; then
+    true
+else
+    echo "Please install 'dialog' before you continue."
+    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
+    exit 1
+fi
+
 SCRIPT_DIR=`pwd`
 TEMP=/tmp
 DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --ok-label \"Confirm\""
