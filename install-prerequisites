@@ -1,0 +1,56 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run this script as root." 1>&2
+    exit 1
+fi
+
+export DEP_PACK="adduser \
+python \
+postgresql-client \
+python-dateutil \
+python-docutils \
+python-feedparser \
+python-gdata \
+python-imaging \
+python-jinja2 \
+python-ldap \
+python-libxslt1 \
+python-lxml
+python-mako \
+python-mock \
+python-openid \
+python-psutil \
+python-psycopg2 \
+python-pybabel \
+python-pychart \
+python-pydot
+python-pyparsing \
+python-reportlab \
+python-simplejson \
+python-tz \
+python-unittest2 \
+python-vatnumber \
+python-vobject \
+python-webdav \
+python-werkzeug \
+python-xlwt \
+python-yaml \
+python-zsi \
+gunicorn \
+nginx-full \
+supervisor"
+
+# nginx PPA
+add-apt-repository -y ppa:nginx/stable
+# Gunicorn PPA
+add-apt-repository -y ppa:gunicorn/ppa
+# Latest GNU Tools
+#add-apt-repository -y ppa:dns/gnu
+# Do system upgrade before installing
+apt-get update
+apt-get upgrade -y
+
+apt-get -y install $DEP_PACK
+
+update-rc.d -f gunicorn remove
