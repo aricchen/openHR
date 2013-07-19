@@ -48,9 +48,9 @@ chown -R $DBUSER: /var/$SRC_DIRNAME
 cp $SRC_AP/openerp-wsgi.py $GUNICONF
 
 CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
-WORKERS=`expr '$CPU_COUNT + 1'`
+WORKERS=`expr $CPU_COUNT + 1`
 USERID=`id -u $DBUSER`
-sed -i s\#addonpathhere\#$SRC_AP/openerp/addons\# $GUNICONF/openerp-wsgi.py
+sed -i s\#addonpathhere\#/var/$SRC_DIRNAME/openerp/addons\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbuserhere\#$DBUSER\# $GUNICONF/openerp-wsgi.py
 sed -i s\#dbpasshere\#$DBPASS\# $GUNICONF/openerp-wsgi.py
 sed -i s\#workershere\#$WORKERS\# $GUNICONF/openerp-wsgi.py
