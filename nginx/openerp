@@ -27,7 +27,7 @@ server {
         listen 80;
         server_name  localhost;
 
-        root /var/openerp/openerp/addons;
+        root rootdirhere/addons;
 
         location / {
                 proxy_cache              openerp_cache;

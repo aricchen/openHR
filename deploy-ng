@@ -1,0 +1,75 @@
+#!/bin/sh
+###################################################################
+# This script aims to deploy OpenERP to local system running with #
+# Gunicorn as backend and Nginx as reverse proxy to serve the     #
+# HTTP requests, and Supervisor to monitor Gunicorn process.      #
+# This includes a basic config for nginx without load-balancing.  #
+#                                                                 #
+# This script will do the following:                              #
+# * Create PostgreSQL user: openerp.                              #
+# * Configure nginx and supervisor                                #
+# * Configure WSGI script for Gunicorn                            #
+###################################################################
+
+[ -z $1 ] && echo "Usage: $(basename $0) <openerp source dir>" && exit 1
+
+GUNICONF=/etc/gunicorn.d
+NGINXCONF=/etc/nginx
+NGINXSITE=/etc/nginx/sites-available
+SVCONF=/etc/supervisor/conf.d
+
+SRC_AP=`readlink -f $1`
+SRC_DIRNAME=`echo $SRC_AP | awk '{gsub("/","\n");print};' | tail -n1`
+
+# Create database user
+echo "Please enter username for your database."
+read DBUSER
+echo "Please enter the password for database login role '$DBUSER'."
+sudo -u postgres createuser -d -E -P -R -S $DBUSER
+echo "Please enter your database password again."
+read DBPASS
+sudo adduser --disabled-password --gecos "" $DBUSER
+
+# Copy OpenERP source to /var/
+cp -r $SRC_AP /var/
+chown -R $DBUSER: /var/$SRC_DIRNAME
+
+# Copy WSGI configuration file to Gunicorn config folder.
+cp $SRC_AP/openerp-wsgi.py $GUNICONF
+
+$CPU_COUNT=`grep -i processor /proc/cpuinfo | wc -l`
+$WORKERS=`expr '$CPU_COUNT + 1`
+
+sed -i s#addonpathhere#$SRC_AP/openerp/addons# $GUNICONF/openerp-wsgi.py
+sed -i s#dbuserhere#$DBUSER\# $GUNICONF/openerp-wsgi.py
+sed -i s#dbpasshere#$DBPASS\# $GUNICONF/openerp-wsgi.py
+sed -i s#workershere#$WORKERS\# $GUNICONF/openerp-wsgi.py
+
+# Configure Nginx using template config.
+[ -f $NGINXCONF/nginx.conf ] && mv $NGINXCONF/nginx.conf $NGINXCONF/nginx.conf-backup
+[ -f $NGINXSITE/openerp ] && mv $NGINXSITE/openerp $NGINXSITE/openerp-backup
+rm $NGINXCONF/sites-enabled/*
+cp $SRC_AP/nginx/nginx.conf $NGINXCONF/nginx.conf
+cp $SRC_AP/nginx/openerp $NGINXSITE/openerp
+ln -s $NGINXSITE/openerp $NGINXCONF/sites-enabled/openerp
+
+sed -i s#workercount#$WORKERS\# $NGINXCONF/nginx.conf
+sed -i s#rootdirhere#/var/$SRC_DIRNAME\# $NGINXSITE/openerp
+
+service nginx reload
+
+# Configure Supervisor using template config
+cp $SRC_AP/supervisor/openerp.conf $SVCONF/
+GUNICORN_BIN=`which gunicorn`
+[ ! -d /var/log/openerp ] && mkdir /var/log/openerp && chmod 755 /var/log/openerp
+sed -i s#gunicorn_binary#$GUNICORN_BIN\# $SVCONF/openerp.conf
+sed -i s#gunicorn_confdir#$GUNICONF\# $SVCONF/openerp.conf
+sed -i s#openerp_dir#/var/$SRC_DIRNAME\# $SVCONF/openerp.conf
+
+service supervisor stop
+sleep 1
+service supervisor start
+
+echo "Everything should be installed and set up!"
+
+exit 0

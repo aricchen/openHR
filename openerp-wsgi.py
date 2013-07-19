@@ -27,13 +27,13 @@ conf = openerp.tools.config
 # Path to the OpenERP Addons repository (comma-separated for
 # multiple locations)
 
-conf['addons_path'] = '/var/openerp/addons'
+conf['addons_path'] = 'addonpathhere'
 
 # Optional database config if not using local socket
 conf['db_host'] = 'localhost'
-conf['db_user'] = 'openerp'
+conf['db_user'] = 'dbuserhere'
 conf['db_port'] = 5432
-conf['db_password'] = 'password'
+conf['db_password'] = 'dbpasshere'
 conf['running_env'] = 'dev'
 conf['log_level'] = 'info'
 conf['logrotate'] = True
@@ -49,9 +49,9 @@ application = openerp.service.wsgi_server.application
 # Standard OpenERP XML-RPC port is 8069
 bind = '127.0.0.1:8069'
 pidfile = '/var/run/openerp.pid'
-workers = 9
+workers = workershere
 timeout = 240
 max_requests = 10000
-user = openerp_userid
+user = dbuserhere
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
