@@ -111,5 +111,7 @@ sleep 1
 service supervisor start
 
 echo "Everything should be installed and set up!"
+echo "Please open your browser (preferably Chrome or Firefox)"
+echo "and access http://$DOMNAME/ to start using OpenERP."
 
 exit 0
