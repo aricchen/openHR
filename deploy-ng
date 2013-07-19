@@ -17,7 +17,7 @@ echo "If source dir is not specified, will use current dir." &&
 exit 1
 
 if [ -z $1 ]; then
-	SRCDIR=`pwd
+	SRCDIR=`pwd`
 else
 	SRCDIR=$1
 fi
