@@ -212,8 +212,8 @@ dialog --title "OpenERP Installation" \
        8 65
 
 # Print finish dialog
-dialog --title "OpenERP Installation Successful"
-       --ok-label "OK"
+dialog --title "OpenERP Installation Successful" \
+       --ok-label "OK" \
        --msgbox "OpenERP Installation has completed successfully.\n\
 Please open your browser (preferably Chrome or Firefox)\n\
 and access http://localhost/ to start using OpenERP." \
