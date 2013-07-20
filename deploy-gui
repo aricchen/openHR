@@ -146,10 +146,13 @@ service supervisor stop
 sleep 1
 service supervisor start
 
-echo ""
-echo "Everything should be installed and set up!"
-echo "Please open your browser (preferably Chrome or Firefox)"
-echo "and access http://$DOMNAME/ to start using OpenERP."
-echo ""
+# Print finish dialog
+dialog --title "OpenERP Installation Successful"
+       --ok-label "OK"
+       --msgbox "OpenERP Installation has completed successfully.\n\
+                 Please open your browser (preferably Chrome or Firefox)\n\
+                 and access http://localhost/ to start using OpenERP."
+       7 60
+clear
 
 exit 0
