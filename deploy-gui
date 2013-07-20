@@ -11,23 +11,26 @@
 # * Configure WSGI script for Gunicorn                            #
 ###################################################################
 
-if [ "$1" = "-h" ]; then
-    echo "Usage: $(basename $0) <openerp source dir>" &&
-    echo "If source dir is not specified, will use current dir."
-else
-    echo ""
-    echo "Using current working directory as source."
-    echo ""
-fi
-
-if [ -z $1 ] && SRCDIR=`pwd`
-
 if [[ $EUID -ne 0 ]]; then
     echo ""
     echo "Please run this script as root." 1>&2
     echo ""
     exit 1
 fi
+
+### Dialog Version of Deploy Script ###
+
+TEMP=/tmp
+DIALOGOPTS="--backtitle \"OpenERP Installation\" --max-input 255 --no-cancel --ok-label \"Confirm\""
+
+dialog --title "OpenERP Source Directory" \
+       --inputbox "Please enter the ABSOLUTE path of the OpenERP source directory.\n\
+                   If empty, current working directory will be used."
+       8 70 2> $TEMP/SRCDIR
+SRCDIR=`cat $TEMP/SRCDIR`
+
+[ -z $SRCDIR ] && SRCDIR=`pwd`
+clear
 
 GUNICORN_BIN=`which gunicorn`
 GUNICONF=/etc/gunicorn.d
@@ -49,30 +52,41 @@ echo -e "Please check your source directory." &&
 exit 1
 
 # Define installation path.
-echo ""
-echo "Please specify the path you wish to install OpenERP:"
-echo "Default value is /var, if unspecified."
-read -p "Install Path: " INSTPATH
-[ -z $INSTPATH ] && INSTPATH=/var
+dialog --title "OpenERP Installation Path" \
+       --inputbox "Please specify the path you wish to install OpenERP\n\
+                   Default value is /var, if unspecified."
+       8 70 2> $TEMP/INSTPATH
+INSTPATH=`cat $TEMP/INSTPATH`
 
-# Create database user and Linux user
+[ -z $INSTPATH ] && INSTPATH=/var
+clear
+
 while [ -z $DBUSER ]; do
-echo ""
-echo "Please enter username for your database."
-read -p "Username: " DBUSER
+dialog --title "OpenERP Database User" \
+       --inputbox "Please enter the username for your database." \
+       8 70 2> $TEMP/DBUSER
+DBUSER=`cat $TEMP/DBUSER`
+clear
 done
 
 while [ -z $DBPASS ]; do
-echo ""
-echo "Please enter the password for database login role '$DBUSER'."
-read -s -p "Password: " DBPASS
+dialog --title "Password For Database User" \
+       --insecure
+       --passwordbox "Please enter the password for database login role '$DBUSER'." \
+       8 70 2> $TEMP/DBPASS
+DBPASS=`cat $TEMP/DBPASS`
+rm $TEMP/DBPASS
+clear
 done
 
-while [ -z $DOMNAME ]; do
-echo ""
-echo "Please enter this machine's domain name."
-read -p "Domain Name: " DOMNAME
-done
+dialog --title "System Domain Name" \
+       --inputbox "Please enter the domain name for this machine.\n\
+                   Default value is localhost, if unspecified."
+       8 70 2> $TEMP/DOMNAME
+DOMNAME=`cat $TEMP/DOMNAME`
+
+[ -z $DOMNAME ] && DOMNAME=localhost
+clear
 
 USERDOC=$DBUSER\doc
 
