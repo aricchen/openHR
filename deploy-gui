@@ -13,6 +13,18 @@
 # * Imports zh_CN language PO into OpenERP                        #
 ###################################################################
 
+# Check to see if 'dialog' is installed
+if hash dialog &> /dev/null; then
+    true
+else
+    dialog --title "Tools needed to continue not found" \
+       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
+Do you want to install it now? You can skip it if you want to do it manually." \
+       8 70
+[ $? -eq 0 ] && clear && (sudo apt-get -y install dialog &> /dev/null)
+clear
+fi
+
 # Check for root privilege.
 if [[ $EUID -ne 0 ]]; then
     dialog --title "Root Privilege Request" \
@@ -25,18 +37,6 @@ Please enter your sudo password to continue." \
     echo $SUDOPASS | sudo -S $0
     unset $SUDOPASS
     exit 0
-fi
-
-# Check to see if 'dialog' is installed
-if hash dialog &> /dev/null; then
-    true
-else
-    dialog --title "Tools needed to continue not found" \
-       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
-Do you want to install it now? You can skip it if you want to do it manually." \
-       8 70
-[ $? -eq 0 ] && clear && (apt-get -y install dialog &> /dev/null)
-clear
 fi
 
 # Clean up variables
