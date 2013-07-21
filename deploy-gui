@@ -17,12 +17,11 @@
 if hash dialog &> /dev/null; then
     true
 else
-    dialog --title "Tools needed to continue not found" \
-       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
-Do you want to install it now? You can skip it if you want to do it manually." \
-       8 70
-[ $? -eq 0 ] && clear && (sudo apt-get -y install dialog &> /dev/null)
-clear
+    echo ""
+    echo "Please install 'dialog' before you continue."
+    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
+    echo ""
+    exit 1
 fi
 
 # Check for root privilege.

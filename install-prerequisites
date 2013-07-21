@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Check if 'dialog' is installed.
+if hash dialog &> /dev/null; then
+    true
+else
+    echo ""
+    echo "Please install 'dialog' before you continue."
+    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
+    echo ""
+    exit 1
+fi
+
 # Check for privileges.
 if [[ $EUID -ne 0 ]]; then
     dialog --title "Root Privilege Request" \
@@ -12,19 +23,6 @@ Please enter your sudo password to continue." \
     echo $SUDOPASS | sudo -S $0
     unset $SUDOPASS
     exit 0
-fi
-
-# Check if 'dialog' is installed.
-if hash dialog &> /dev/null; then
-    true
-else
-    dialog --title "Tools needed to continue not found" \
-       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
-Do you want to install it now? You can skip it if you want to do it manually." \
-       8 70
-[ $? -eq 0 ] && clear && (dialog --title "Installing 'dialog'..." \
---msgbox "Please wait. Installation will start shortly." 8 70 | apt-get -y install dialog)
-clear
 fi
 
 PROGRESS=0
