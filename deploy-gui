@@ -283,12 +283,12 @@ rm $TEMP/$files &> /dev/null
 done
 
 # Remove unnecessary files/folders in target folder
-for directories in "autoreload debian doc install nginx openerp.egg-info supervisor win32"; do
-[ -d $INSTPATH/$SRC_DIRNAME/$directories ] && rm -rf $INSTPATH/$SRC_DIRNAME/$directories
+for dirs in "autoreload debian doc install nginx openerp.egg-info supervisor win32"; do
+[ -d $INSTPATH/$SRC_DIRNAME/$dirs ] && rm -rf $INSTPATH/$SRC_DIRNAME/$dirs &> /dev/null
 done
 
 for files in ".gitignore MANIFEST.in PKG-INFO README README.md deploy.gui install-modules install-prerequisites setup.cfg setup.nsi setup.py setup_rpm.sh zh_CN.po"; do
-[ -f $INSTPATH/$SRC_DIRNAME/$files ]  && rm $files
+[ -f $INSTPATH/$SRC_DIRNAME/$files ]  && rm $files &> /dev/null
 done
 
 # Print finish dialog
