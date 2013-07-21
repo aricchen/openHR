@@ -208,7 +208,8 @@ echo "XXX"
 echo "Creating database for OpenERP..."
 sudo -u $DBUSER createdb $DBUSER &>> $LOGFILE
 sudo -u $DBUSER python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --stop-after-init --without-demo=all -i $MODSRC &>> $LOGFILE
-sudo -u $DBUSER python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --i18n-import=$INSTPATH/$SRC_DIRNAME/zh_CN.po -l zh_CN &>> $LOGFILE
+# Disabled import translation from CLI for now. Causes problems.
+#sudo -u $DBUSER python $INSTPATH/$SRC_DIRNAME/openerp-server -d $DBUSER --i18n-import=$INSTPATH/$SRC_DIRNAME/zh_CN.po -l zh_CN &>> $LOGFILE
 sudo -u postgres psql -q -d $DBUSER -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;" &>> $LOGFILE
 sudo -u postgres psql -q -d $DBUSER -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO $USERDOC;" &>> $LOGFILE
 echo "XXX"
