@@ -15,23 +15,32 @@
 
 # Check for root privilege.
 if [[ $EUID -ne 0 ]]; then
-    echo ""
-    echo "Please run this script as root." 1>&2
-    echo ""
-    exit 1
+    dialog --title "Root Privilege Request" \
+           --insecure \
+           --passwordbox "Root privileges is required to continue install.\n\
+Please enter your sudo password to continue." \
+           8 70 2> $TEMP/SUDOPASS
+    SUDOPASS=`cat $TEMP/SUDOPASS`
+    rm $TEMP/SUDOPASS
+    echo $SUDOPASS | sudo -S $0
+    unset $SUDOPASS
+    exit 0
 fi
 
 # Check to see if 'dialog' is installed
 if hash dialog &> /dev/null; then
     true
 else
-    echo "Please install 'dialog' before you continue."
-    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
-    exit 1
+    dialog --title "Tools needed to continue not found" \
+       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
+Do you want to install it now? You can skip it if you want to do it manually." \
+       8 70
+[ $? -eq 0 ] && clear && (apt-get -y install dialog &> /dev/null)
+clear
 fi
 
 # Clean up variables
-for vars in SCRIPT_DIR TEMP LOGFILE DIALOGOPTS CPU_COUNT WORKERS GUNICORN_BIN GUNICONF NGINXCONF NGINXSITE SVCONF SRC_AP USERDOC DBUSER DBPASS DOMNAME INSTPATH SRCDIR; do
+for vars in SCRIPT_DIR TEMP LOGFILE DIALOGOPTS CPU_COUNT WORKERS GUNICORN_BIN GUNICONF NGINXCONF NGINXSITE SVCONF SRC_AP USERDOC DBUSER DBPASS DOMNAME INSTPATH SRCDIR SUDOPASS; do
 unset $vars
 done
 

@@ -1,19 +1,31 @@
 #!/bin/bash
 
+# Check for privileges.
 if [[ $EUID -ne 0 ]]; then
-    echo "Please run this script as root." 1>&2
-    exit 1
+    dialog --title "Root Privilege Request" \
+           --insecure \
+           --passwordbox "Root privileges is required to continue install. \
+Please enter your sudo password to continue." \
+           8 70 2> $TEMP/SUDOPASS
+    SUDOPASS=`cat $TEMP/SUDOPASS`
+    rm $TEMP/SUDOPASS
+    echo $SUDOPASS | sudo -S $0
+    unset $SUDOPASS
+    exit 0
 fi
 
-if hash dialog 2>/dev/null; then
+# Check if 'dialog' is installed.
+if hash dialog &> /dev/null; then
     true
 else
-    echo "Please install 'dialog' before you continue."
-    echo "You can use 'sudo apt-get install dialog' under Ubuntu to install it."
-    exit 1
-fi
-
+    dialog --title "Tools needed to continue not found" \
+       --yesno "In order to continue installation, package 'dialog' has to be installed.\n\
+Do you want to install it now? You can skip it if you want to do it manually." \
+       8 70
+[ $? -eq 0 ] && clear && (dialog --title "Installing 'dialog'..." \
+--msgbox "Please wait. Installation will start shortly." 8 70 | apt-get -y install dialog)
 clear
+fi
 
 PROGRESS=0
 
@@ -22,6 +34,8 @@ echo "XXX"
 echo "Prerequisites will be installed shortly."
 echo ""
 echo "Please wait for the installation to finish."
+
+# List of packages needed to be installed.
 export DEP_PACK="adduser \
 python \
 postgresql-client \
@@ -106,6 +120,6 @@ echo $PROGRESS
 ) |
 dialog --title "Installing prerequisites" --gauge "Installation Progress:" 8 65
 
-echo ""
-echo "Prerequisites are installed successfully."
-echo "Please continue to next step."
+dialog --title "Installing 'dialog'..." \
+       --msgbox "Prerequisites are installed successfully.\n\
+Please continue to next step." 8 70
