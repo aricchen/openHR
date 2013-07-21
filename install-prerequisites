@@ -118,6 +118,6 @@ echo $PROGRESS
 ) |
 dialog --title "Installing prerequisites" --gauge "Installation Progress:" 8 65
 
-dialog --title "Installing 'dialog'..." \
+dialog --title "Prerequisites Installation Complete" \
        --msgbox "Prerequisites are installed successfully.\n\
 Please continue to next step." 8 70
