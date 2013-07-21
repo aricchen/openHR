@@ -19,9 +19,9 @@ if [[ $EUID -ne 0 ]]; then
            --insecure \
            --passwordbox "Root privileges is required to continue install.\n\
 Please enter your sudo password to continue." \
-           8 70 2> $TEMP/SUDOPASS
-    SUDOPASS=`cat $TEMP/SUDOPASS`
-    rm $TEMP/SUDOPASS
+           8 70 2> /tmp/SUDOPASS
+    SUDOPASS=`cat /tmp/SUDOPASS`
+    rm /tmp/SUDOPASS
     echo $SUDOPASS | sudo -S $0
     unset $SUDOPASS
     exit 0
