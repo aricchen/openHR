@@ -2,3 +2,5 @@
 # Ignores These Files #
 #######################
 *.pyc
+openerp-server.conf
+.pydevproject
