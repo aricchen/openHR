@@ -39,7 +39,7 @@ Please enter your sudo password to continue." \
 fi
 
 # Clean up variables
-for vars in SCRIPT_DIR TEMP LOGFILE DIALOGOPTS CPU_COUNT WORKERS GUNICORN_BIN GUNICONF NGINXCONF NGINXSITE SVCONF SRC_AP USERDOC DBUSER DBPASS DOMNAME INSTPATH SRCDIR SUDOPASS; do
+for vars in "SCRIPT_DIR TEMP LOGFILE DIALOGOPTS CPU_COUNT WORKERS GUNICORN_BIN GUNICONF NGINXCONF NGINXSITE SVCONF SRC_AP USERDOC DBUSER DBPASS DOMNAME INSTPATH SRCDIR SUDOPASS"; do
 unset $vars
 done
 
@@ -57,7 +57,7 @@ NGINXSITE=/etc/nginx/sites-available
 SVCONF=/etc/supervisor/conf.d
 
 # Clean up old files in case the last installation failed unexpectedly.
-for files in DBUSER DBPASS DOMNAME INSTPATH SRCDIR; do
+for files in "DBUSER DBPASS DOMNAME INSTPATH SRCDIR"; do
 rm $TEMP/$files &> /dev/null
 done
 
@@ -278,8 +278,17 @@ dialog --title "OpenERP Installation" \
        8 65
 
 # Clean up
-for files in DBUSER DOMNAME INSTPATH SRCDIR; do
+for files in "DBUSER DOMNAME INSTPATH SRCDIR"; do
 rm $TEMP/$files &> /dev/null
+done
+
+# Remove unnecessary files/folders in target folder
+for directories in "autoreload debian doc install nginx openerp.egg-info supervisor win32"; do
+[ -d $INSTPATH/$SRC_DIRNAME/$directories ] && rm -rf $INSTPATH/$SRC_DIRNAME/$directories
+done
+
+for files in ".gitignore MANIFEST.in PKG-INFO README README.md deploy.gui install-modules install-prerequisites setup.cfg setup.nsi setup.py setup_rpm.sh zh_CN.po"; do
+[ -f $INSTPATH/$SRC_DIRNAME/$files ]  && rm $files
 done
 
 # Print finish dialog
